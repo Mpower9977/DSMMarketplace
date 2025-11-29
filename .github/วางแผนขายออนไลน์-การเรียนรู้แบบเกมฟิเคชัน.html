@@ -1,0 +1,653 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Studio Marketplace Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --blue: #5CA8FF;
+            --blue-600: #2878E5;
+            --pink: #FF6EC7;
+            --bg: #0b1220;
+            --card: #10192f;
+        }
+        
+        body {
+            font-family: 'Noto Sans Thai', sans-serif;
+            background: radial-gradient(1200px 600px at 80% -10%, rgba(255,110,199,.25), transparent 60%),
+                        radial-gradient(1000px 600px at -10% -10%, rgba(92,168,255,.25), transparent 60%),
+                        var(--bg);
+            color: #e5e7eb;
+            min-height: 100vh;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, var(--blue), var(--pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .card {
+            background: linear-gradient(160deg, rgba(92,168,255,.12), rgba(255,110,199,.10));
+            border: 1px solid rgba(138,184,255,.35);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(92,168,255,.35);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, var(--blue-600), var(--pink));
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 24px rgba(40,120,229,.35);
+        }
+        
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(92,168,255,.3);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--pink);
+            cursor: pointer;
+        }
+        
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+        }
+        
+        .category-card {
+            background: rgba(92,168,255,.12);
+            border: 1px solid rgba(138,184,255,.35);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .category-card:hover {
+            background: rgba(92,168,255,.2);
+            transform: translateY(-2px);
+        }
+        
+        .chart-container {
+            position: relative;
+            min-height: 300px;
+            max-height: 400px;
+            margin-bottom: 1rem;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background: rgba(15,23,42,.9);
+            border: 1px solid rgba(138,184,255,.35);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <header class="mb-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-pink-500 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-store text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold">Digital Studio Marketplace</h1>
+                        <p class="text-sm opacity-80">แพลตฟอร์มขายภาพและสื่อดิจิทัลทั่วโลก</p>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button class="px-4 py-2 rounded-lg border border-gray-600 hover:bg-gray-800 transition">
+                        <i class="fas fa-globe mr-2"></i>TH/EN
+                    </button>
+                    <button class="btn-primary">
+                        <i class="fas fa-user-plus mr-2"></i>สมัครสมาชิก
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="mb-12">
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <span class="inline-block px-4 py-2 rounded-full bg-blue-900/30 border border-blue-500/50 text-sm font-medium mb-4">
+                        <i class="fas fa-chart-line mr-2"></i>Simulation Mode
+                    </span>
+                    <h2 class="text-4xl font-bold mb-4">
+                        จำลองการทำงานของ <span class="gradient-text">Marketplace</span>
+                    </h2>
+                    <p class="text-gray-300 mb-6">
+                        ปรับค่าพารามิเตอร์ต่างๆ เพื่อดูว่าแพลตฟอร์มขายภาพและสื่อดิจิทัลของคุณจะเติบโตอย่างไร
+                        และสร้างรายได้ให้คุณได้เท่าไหร่
+                    </p>
+                    <div class="flex gap-4 flex-wrap">
+                        <button class="btn-primary" onclick="runSimulation()">
+                            <i class="fas fa-play mr-2"></i>เริ่มจำลองสถานการณ์
+                        </button>
+                        <button class="px-4 py-2 rounded-lg border border-gray-600 hover:bg-gray-800 transition" onclick="resetSimulation()">
+                            <i class="fas fa-redo mr-2"></i>รีเซ็ต
+                        </button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                            <div class="text-3xl font-bold gradient-text" id="totalSellers">0</div>
+                            <div class="text-sm text-gray-400">ผู้ขาย</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold gradient-text" id="totalItems">0</div>
+                            <div class="text-sm text-gray-400">สินค้า</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold gradient-text" id="totalRevenue">฿0</div>
+                            <div class="text-sm text-gray-400">รายได้รวม</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Parameters Section -->
+        <section class="mb-12">
+            <h3 class="text-2xl font-bold mb-6">
+                <i class="fas fa-sliders-h mr-2"></i>ปรับค่าพารามิเตอร์
+            </h3>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="card">
+                    <label class="block mb-2 font-medium">
+                        ค่าคอมมิชชั่น: <span id="commissionValue" class="gradient-text">15%</span>
+                    </label>
+                    <input type="range" class="slider" id="commission" min="5" max="50" value="15" step="1">
+                    <div class="flex justify-between text-xs text-gray-400 mt-1">
+                        <span>5%</span>
+                        <span>50%</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <label class="block mb-2 font-medium">
+                        งบประมาณการตลาด: <span id="marketingValue" class="gradient-text">฿10,000</span>
+                    </label>
+                    <input type="range" class="slider" id="marketing" min="0" max="100000" value="10000" step="1000">
+                    <div class="flex justify-between text-xs text-gray-400 mt-1">
+                        <span>฿0</span>
+                        <span>฿100,000</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <label class="block mb-2 font-medium">
+                        ระยะเวลาจำลอง: <span id="monthsValue" class="gradient-text">12 เดือน</span>
+                    </label>
+                    <input type="range" class="slider" id="months" min="1" max="24" value="12" step="1">
+                    <div class="flex justify-between text-xs text-gray-400 mt-1">
+                        <span>1 เดือน</span>
+                        <span>24 เดือน</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section class="mb-12">
+            <h3 class="text-2xl font-bold mb-6">
+                <i class="fas fa-th-large mr-2"></i>หมวดหมู่สินค้า (20 หมวด)
+            </h3>
+            <div class="category-grid" id="categoriesGrid">
+                <!-- Categories will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="mb-12">
+            <h3 class="text-2xl font-bold mb-6">
+                <i class="fas fa-chart-area mr-2"></i>ผลลัพธ์การจำลอง
+            </h3>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="card">
+                    <h4 class="text-lg font-semibold mb-4">การเติบโตของผู้ใช้</h4>
+                    <div class="chart-container">
+                        <canvas id="growthChart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <h4 class="text-lg font-semibold mb-4">รายได้รายเดือน</h4>
+                    <div class="chart-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Insights Section -->
+        <section class="mb-12">
+            <h3 class="text-2xl font-bold mb-6">
+                <i class="fas fa-lightbulb mr-2"></i>ข้อมูลเชิงลึก
+            </h3>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="card">
+                    <h4 class="text-lg font-semibold mb-2">
+                        <i class="fas fa-users text-blue-400 mr-2"></i>กลุ่มลูกค้าเป้าหมาย
+                    </h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>นักออกแบบกราฟิก (35%)</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>นักการตลาด (25%)</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>เจ้าของธุรกิจ (20%)</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>นักสร้างเนื้อหา (20%)</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4 class="text-lg font-semibold mb-2">
+                        <i class="fas fa-chart-line text-pink-400 mr-2"></i>จุดสำคัญสำหรับความสำเร็จ
+                    </h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><i class="fas fa-star text-yellow-400 mr-2"></i>มีผู้ขายคุณภาพสูง</li>
+                        <li><i class="fas fa-star text-yellow-400 mr-2"></i>ระบบชำระเงินรวดเร็ว</li>
+                        <li><i class="fas fa-star text-yellow-400 mr-2"></i>การตลาดอย่างต่อเนื่อง</li>
+                        <li><i class="fas fa-star text-yellow-400 mr-2"></i>ประสบการณ์ผู้ใช้ที่ดี</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4 class="text-lg font-semibold mb-2">
+                        <i class="fas fa-exclamation-triangle text-orange-400 mr-2"></i>ความเสี่ยงที่ควรระวัง
+                    </h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><i class="fas fa-shield-alt text-red-400 mr-2"></i>การละเมิดลิขสิทธิ์</li>
+                        <li><i class="fas fa-shield-alt text-red-400 mr-2"></i>การหลอกลวง</li>
+                        <li><i class="fas fa-shield-alt text-red-400 mr-2"></i>การแข่งขันสูง</li>
+                        <li><i class="fas fa-shield-alt text-red-400 mr-2"></i>ต้นทุนการดำเนินการ</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Action Plan -->
+        <section class="mb-12">
+            <h3 class="text-2xl font-bold mb-6">
+                <i class="fas fa-tasks mr-2"></i>แผนปฏิบัติการ
+            </h3>
+            <div class="card">
+                <div class="space-y-4">
+                    <div class="flex items-start gap-4">
+                        <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0 mt-1">
+                            <span class="text-white font-bold text-sm">1</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold mb-1">เดือนที่ 1-3: เปิดตัว MVP</h4>
+                            <p class="text-sm text-gray-400">ใช้ WordPress + WooCommerce + Dokan เพื่อสร้างเว็บไซต์ marketplace พื้นฐาน มุ่งเน้นการรับสมัครผู้ขายคุณภาพ</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0 mt-1">
+                            <span class="text-white font-bold text-sm">2</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold mb-1">เดือนที่ 4-6: ขยายฐานผู้ใช้</h4>
+                            <p class="text-sm text-gray-400">เพิ่มการตลาดผ่านโซเชียลมีเดีย ปรับปรุง UX/UI และเพิ่มฟีเจอร์ใหม่ๆ เช่น ระบบค้นหาขั้นสูง</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0 mt-1">
+                            <span class="text-white font-bold text-sm">3</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold mb-1">เดือนที่ 7-12: พัฒนาแอปมือถือ</h4>
+                            <p class="text-sm text-gray-400">พัฒนาแอปมือถือด้วย React Native เพื่อเพิ่มการเข้าถึงและประสบการณ์ผู้ใช้ที่ดีขึ้น</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        // Categories data
+        const categories = [
+            { name: 'Handmade Items', nameTh: 'สินค้าแฮนด์เมด', icon: 'fa-hand-holding-heart', color: '#FF6EC7' },
+            { name: 'Vintage Items', nameTh: 'สินค้าวินเทจ', icon: 'fa-history', color: '#5CA8FF' },
+            { name: 'Craft Supplies', nameTh: 'อุปกรณ์งานคราฟต์', icon: 'fa-palette', color: '#FF6EC7' },
+            { name: 'Digital Items', nameTh: 'สินค้าดิจิทัล', icon: 'fa-laptop', color: '#5CA8FF' },
+            { name: 'Vector', nameTh: 'ไฟล์เวกเตอร์', icon: 'fa-vector-square', color: '#FF6EC7' },
+            { name: 'Photos', nameTh: 'รูปถ่าย', icon: 'fa-camera', color: '#5CA8FF' },
+            { name: 'Illustrations', nameTh: 'ภาพประกอบ', icon: 'fa-paint-brush', color: '#FF6EC7' },
+            { name: 'Editorial', nameTh: 'ภาพเชิงข่าว', icon: 'fa-newspaper', color: '#5CA8FF' },
+            { name: 'Footage', nameTh: 'วิดีโอฟุตเทจ', icon: 'fa-video', color: '#FF6EC7' },
+            { name: 'Sound Effects', nameTh: 'เอฟเฟกต์เสียง', icon: 'fa-volume-up', color: '#5CA8FF' },
+            { name: 'Music', nameTh: 'เพลง / บีท', icon: 'fa-music', color: '#FF6EC7' },
+            { name: 'Logos', nameTh: 'โลโก้แบรนด์', icon: 'fa-trademark', color: '#5CA8FF' },
+            { name: 'Idents', nameTh: 'อินโทร / ตัวตน', icon: 'fa-id-badge', color: '#FF6EC7' },
+            { name: 'Design Services', nameTh: 'งานออกแบบ', icon: 'fa-drafting-compass', color: '#5CA8FF' },
+            { name: 'Artwork', nameTh: 'งานภาพศิลป์', icon: 'fa-image', color: '#FF6EC7' },
+            { name: 'SVG/PNG Elements', nameTh: 'องค์ประกอบกราฟิก', icon: 'fa-shapes', color: '#5CA8FF' },
+            { name: 'Backgrounds', nameTh: 'พื้นหลัง', icon: 'fa-th', color: '#FF6EC7' },
+            { name: 'GIFs', nameTh: 'ภาพเคลื่อนไหว', icon: 'fa-film', color: '#5CA8FF' },
+            { name: 'Music Media', nameTh: 'สื่อเพลง', icon: 'fa-compact-disc', color: '#FF6EC7' },
+            { name: 'Bags & Totes', nameTh: 'กระเป๋า', icon: 'fa-shopping-bag', color: '#5CA8FF' }
+        ];
+
+        // Initialize categories grid
+        function initializeCategories() {
+            const grid = document.getElementById('categoriesGrid');
+            grid.innerHTML = '';
+            
+            categories.forEach((cat, index) => {
+                const card = document.createElement('div');
+                card.className = 'category-card';
+                card.innerHTML = `
+                    <i class="fas ${cat.icon} text-2xl mb-2" style="color: ${cat.color}"></i>
+                    <div class="font-medium text-sm">${cat.nameTh}</div>
+                    <div class="text-xs text-gray-400">${cat.name}</div>
+                `;
+                card.onclick = () => toggleCategory(index);
+                grid.appendChild(card);
+            });
+        }
+
+        // Toggle category selection
+        const selectedCategories = new Set(categories.map((_, i) => i));
+        function toggleCategory(index) {
+            if (selectedCategories.has(index)) {
+                selectedCategories.delete(index);
+            } else {
+                selectedCategories.add(index);
+            }
+            updateCategoryDisplay();
+        }
+
+        function updateCategoryDisplay() {
+            const cards = document.querySelectorAll('.category-card');
+            cards.forEach((card, index) => {
+                if (selectedCategories.has(index)) {
+                    card.style.opacity = '1';
+                    card.style.transform = 'scale(1)';
+                } else {
+                    card.style.opacity = '0.5';
+                    card.style.transform = 'scale(0.95)';
+                }
+            });
+        }
+
+        // Slider event listeners
+        document.getElementById('commission').addEventListener('input', function(e) {
+            document.getElementById('commissionValue').textContent = e.target.value + '%';
+        });
+
+        document.getElementById('marketing').addEventListener('input', function(e) {
+            document.getElementById('marketingValue').textContent = '฿' + parseInt(e.target.value).toLocaleString();
+        });
+
+        document.getElementById('months').addEventListener('input', function(e) {
+            document.getElementById('monthsValue').textContent = e.target.value + ' เดือน';
+        });
+
+        // Chart variables
+        let growthChart, revenueChart;
+
+        // Initialize charts
+        function initializeCharts() {
+            const growthCtx = document.getElementById('growthChart').getContext('2d');
+            growthChart = new Chart(growthCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'ผู้ขาย',
+                        data: [],
+                        borderColor: '#5CA8FF',
+                        backgroundColor: 'rgba(92, 168, 255, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'ผู้ซื้อ',
+                        data: [],
+                        borderColor: '#FF6EC7',
+                        backgroundColor: 'rgba(255, 110, 199, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#e5e7eb' }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#9ca3af' },
+                            grid: { color: 'rgba(156, 163, 175, 0.1)' }
+                        },
+                        y: {
+                            ticks: { color: '#9ca3af' },
+                            grid: { color: 'rgba(156, 163, 175, 0.1)' }
+                        }
+                    }
+                }
+            });
+
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            revenueChart = new Chart(revenueCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'รายได้ (บาท)',
+                        data: [],
+                        backgroundColor: 'rgba(92, 168, 255, 0.6)',
+                        borderColor: '#5CA8FF',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#e5e7eb' }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#9ca3af' },
+                            grid: { color: 'rgba(156, 163, 175, 0.1)' }
+                        },
+                        y: {
+                            ticks: { color: '#9ca3af' },
+                            grid: { color: 'rgba(156, 163, 175, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Simulation logic
+        function runSimulation() {
+            try {
+                const commission = parseFloat(document.getElementById('commission').value) / 100;
+                const marketingBudget = parseFloat(document.getElementById('marketing').value);
+                const months = parseInt(document.getElementById('months').value);
+                
+                // Calculate growth factors
+                const marketingMultiplier = 1 + (marketingBudget / 100000) * 0.5;
+                const categoryMultiplier = 1 + (selectedCategories.size / categories.length) * 0.3;
+                
+                // Initialize data
+                let sellers = 10;
+                let buyers = 20;
+                let items = 50;
+                let totalRevenue = 0;
+                
+                const sellerData = [sellers];
+                const buyerData = [buyers];
+                const revenueData = [0];
+                const labels = ['เดือน 1'];
+                
+                // Simulate month by month
+                for (let i = 2; i <= months; i++) {
+                    // Growth calculations
+                    const sellerGrowth = Math.random() * 0.3 + 0.1;
+                    const buyerGrowth = Math.random() * 0.4 + 0.2;
+                    
+                    sellers = Math.floor(sellers * (1 + sellerGrowth * marketingMultiplier));
+                    buyers = Math.floor(buyers * (1 + buyerGrowth * marketingMultiplier));
+                    items = Math.floor(items * (1 + Math.random() * 0.2 + 0.1));
+                    
+                    // Revenue calculation
+                    const monthlyTransactions = Math.floor(buyers * 0.3 * (1 + Math.random() * 0.2));
+                    const avgTransactionValue = 150 + Math.random() * 100;
+                    const monthlyRevenue = monthlyTransactions * avgTransactionValue * commission;
+                    totalRevenue += monthlyRevenue;
+                    
+                    // Store data
+                    sellerData.push(sellers);
+                    buyerData.push(buyers);
+                    revenueData.push(monthlyRevenue);
+                    labels.push(`เดือน ${i}`);
+                }
+                
+                // Update displays
+                document.getElementById('totalSellers').textContent = sellers.toLocaleString();
+                document.getElementById('totalItems').textContent = items.toLocaleString();
+                document.getElementById('totalRevenue').textContent = '฿' + Math.floor(totalRevenue).toLocaleString();
+                
+                // Update charts
+                growthChart.data.labels = labels;
+                growthChart.data.datasets[0].data = sellerData;
+                growthChart.data.datasets[1].data = buyerData;
+                growthChart.update();
+                
+                revenueChart.data.labels = labels;
+                revenueChart.data.datasets[0].data = revenueData;
+                revenueChart.update();
+                
+                // Show success message
+                showTooltip('จำลองสถานการณ์เสร็จสิ้น!', event);
+            } catch (error) {
+                console.error('Simulation error:', error);
+                showTooltip('เกิดข้อผิดพลาดในการจำลองสถานการณ์', event);
+            }
+        }
+
+        function resetSimulation() {
+            document.getElementById('commission').value = 15;
+            document.getElementById('marketing').value = 10000;
+            document.getElementById('months').value = 12;
+            
+            document.getElementById('commissionValue').textContent = '15%';
+            document.getElementById('marketingValue').textContent = '฿10,000';
+            document.getElementById('monthsValue').textContent = '12 เดือน';
+            
+            document.getElementById('totalSellers').textContent = '0';
+            document.getElementById('totalItems').textContent = '0';
+            document.getElementById('totalRevenue').textContent = '฿0';
+            
+            if (growthChart && revenueChart) {
+                growthChart.data.labels = [];
+                growthChart.data.datasets[0].data = [];
+                growthChart.data.datasets[1].data = [];
+                growthChart.update();
+                
+                revenueChart.data.labels = [];
+                revenueChart.data.datasets[0].data = [];
+                revenueChart.update();
+            }
+            
+            selectedCategories.clear();
+            categories.forEach((_, i) => selectedCategories.add(i));
+            updateCategoryDisplay();
+        }
+
+        function showTooltip(text, event) {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.textContent = text;
+            tooltip.style.display = 'block';
+            tooltip.style.left = event.pageX + 10 + 'px';
+            tooltip.style.top = event.pageY - 30 + 'px';
+            
+            setTimeout(() => {
+                tooltip.style.display = 'none';
+            }, 3000);
+        }
+
+        // Initialize on load
+        window.addEventListener('load', function() {
+            initializeCategories();
+            initializeCharts();
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (growthChart) growthChart.resize();
+            if (revenueChart) revenueChart.resize();
+        });
+    </script>
+<script>window.parent.postMessage({ action: "ready" }, "*"); 
+ 
+window.console = new Proxy(console, {
+  get(target, prop) {
+    if (['log', 'warn', 'error'].includes(prop)) {
+      return new Proxy(target[prop], {
+        apply(fn, thisArg, args) {
+          fn.apply(thisArg, args);
+          window.parent.postMessage({ action: 'console', 
+            type: prop, 
+            args: args.map((arg) => {
+              try {
+                return JSON.stringify(arg).replace(/^["']|["']$/g, '');
+              } catch (e) {
+                return arg;
+              }
+            }) 
+          }, '*');
+        }
+      });
+    }
+    return target[prop];
+  }
+});
+</script></body>
+</html>
