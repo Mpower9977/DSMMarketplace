@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pixel_Motion_Shop</title>
+  <meta name="description" content="Pixel_Motion_Shop — Digital files marketplace (Phase 1)." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="./config.js" defer></script>
+  <script src="./app.js" defer></script>
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body class="bg-gray-100 p-5">
+
+  <div class="max-w-5xl mx-auto mb-4">
+    <div class="bg-white rounded-2xl shadow p-4 flex flex-wrap items-center justify-between gap-3">
+      <a href="./index.html" class="font-bold text-lg">Pixel_Motion_Shop</a>
+      <div class="flex flex-wrap gap-2">
+        <a href="./index.html" class="px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm">Shop</a>
+        <a href="./seller.html" class="px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm">Sell</a>
+        <a href="./orders.html" class="px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm">My Orders</a>
+        <a href="./admin.html" class="px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm">Admin</a>
+        <button id="btnAuth" class="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 text-sm">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-5xl mx-auto">
+    <div class="bg-white rounded-2xl shadow p-5">
+      <h1 class="text-xl font-bold">My Orders</h1>
+      <p class="text-sm text-gray-600 mt-1">Download available after admin approval (status=paid).</p>
+      <div id="orders" class="grid gap-4 mt-5"></div>
+      <div id="ordersEmpty" class="hidden text-sm text-gray-600 mt-5">No orders yet.</div>
+    </div>
+  </div>
+
+  <div class="max-w-5xl mx-auto mt-6 text-xs text-gray-500">
+    Phase 1: PromptPay manual verify • Files protected by Supabase RLS.
+  </div>
+</body>
+</html>
